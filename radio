@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import gtk, time, pygst, gst, os
+import gtk, time, pygst, gst, pynotify, sys
 class Player:
 	def __init__(self):
 		self.fritz=('mms://stream2.rbb-online.de/wmtencoder/fritz-live-backup.wma')
@@ -11,27 +11,26 @@ class Player:
 		bus.add_signal_watch()
 		bus.connect("message", self.on_message)
 	
+	
 	def playdradio(self,chan):
 		self.player.set_state(gst.STATE_NULL)
 		self.player.set_property("uri",self.dradio)
 		self.player.set_state(gst.STATE_PLAYING)
-		self.notify("Spiele Dradio")
+		notify("Spiele Dradio")
 
 	def playfritz(self,chan):
 		self.player.set_state(gst.STATE_NULL)
 		self.player.set_property("uri",self.fritz)
 		self.player.set_state(gst.STATE_PLAYING)
-		self.notify("Spiele Fritz")
+		notify("Spiele Fritz")
 	
 	def playdradiow(self,chan):
 		self.player.set_state(gst.STATE_NULL)
 		self.player.set_property("uri",self.dradiow)
 		self.player.set_state(gst.STATE_PLAYING)
-		self.notify("Spiele Dradio Wissen")
+		notify("Spiele Dradio Wissen")
 	
-	def notify(self,message):
-		os.system('notify-send "'+message+'"')
-
+	
 	def on_message(self,bus,message):
 		t = message.type
 		if t == gst.MESSAGE_EOS:
@@ -74,12 +73,36 @@ class RadioMenu(gtk.Menu):
 			self.show_all()
 			self.popup(None, None, gtk.status_icon_position_menu, button, time, icon)
 
+	
 
-
+def initCaps ():
+	capabilities = {'actions':             False,
+	'body':                False,
+	'body-hyperlinks':     False,
+	'body-images':         False,
+	'body-markup':         False,
+	'icon-multi':          False,
+	'icon-static':         False,
+	'sound':               False,
+	'image/svg+xml':       False,
+	'private-synchronous': False,
+	'append':              False,
+	'private-icon-only':   False}
+	caps = pynotify.get_server_caps ()
+	if caps is None:
+        	print "Failed to receive server caps."
+		sys.exit (1)
+		for cap in caps:
+			capabilities[cap] = True
+def notify(message):
+		pynotify.init('icon-summary')
+		printmsg = pynotify.Notification(message,"","gnome-dev-wavelan")
+		printmsg.show()
 
 icon = gtk.status_icon_new_from_file('/usr/share/icons/gnome/24x24/devices/gnome-dev-wavelan.png')
 icon.set_tooltip('Radio switcher')
 player = Player()
 menu = RadioMenu()
+initCaps()
 icon.connect("popup-menu",menu.show_menu)
 gtk.main()
