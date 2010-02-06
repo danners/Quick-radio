@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import gtk, time, pygst, gst, pynotify, os
+import gtk, pygst, gst, pynotify
 class Player:
 	def __init__(self):
 		self.fritz=('mms://stream2.rbb-online.de/wmtencoder/fritz-live-backup.wma')
