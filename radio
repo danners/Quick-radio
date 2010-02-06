@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import gtk, gst, pynotify
+
+
 class Player:
 	def __init__(self):
 		self.fritz=('mms://stream2.rbb-online.de/wmtencoder/fritz-live-backup.wma')
@@ -91,18 +93,19 @@ def initCaps ():
 	caps = pynotify.get_server_caps ()
 	if caps is None:
         	print "Failed to receive server caps."
-		sys.exit (1)
-		for cap in caps:
-			capabilities[cap] = True
+		gtk.main_quit()
+	for cap in caps:
+		capabilities[cap] = True
 def notify(message):
-		pynotify.init('icon-summary')
 		printmsg = pynotify.Notification(message,"","gnome-dev-wavelan")
 		printmsg.show()
+
 
 icon = gtk.status_icon_new_from_file('/usr/share/icons/gnome/24x24/devices/gnome-dev-wavelan.png')
 icon.set_tooltip('Radio switcher')
 player = Player()
 menu = RadioMenu()
+pynotify.init('icon-summary')
 initCaps()
 icon.connect("popup-menu",menu.show_menu)
 gtk.main()
