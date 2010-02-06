@@ -4,7 +4,7 @@ import gtk, pygst, gst, pynotify
 class Player:
 	def __init__(self):
 		self.fritz=('mms://stream2.rbb-online.de/wmtencoder/fritz-live-backup.wma')
-		self.dradio=('http://dradio-ogg.t-bn.de/dlf_high.ogg')
+		self.dradio=('http://dradio.ic.llnwd.net/stream/dradio_dlf_m_a.ogg')
 		self.dradiow=('http://dradio.ic.llnwd.net/stream/dradio_dwissen_m_a.ogg')
 		self.player = gst.element_factory_make("playbin","player")
 		bus = self.player.get_bus()
