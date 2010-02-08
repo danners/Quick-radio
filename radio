@@ -31,7 +31,9 @@ class Player:
 		self.player.set_property("uri",self.dradiow)
 		self.player.set_state(gst.STATE_PLAYING)
 		notify("Spiele Dradio Wissen")
-	
+		
+	def stopradio(self):
+		self.player.set_state(gst.STATE_NULL)
 	
 	def on_message(self,bus,message):
 		t = message.type
@@ -65,11 +67,21 @@ class RadioMenu(gtk.Menu):
                 item.set_image(gtk.image_new_from_stock('gtk-media-play', gtk.ICON_SIZE_MENU))
 		self.append(item)
 
+		
+		item = gtk.ImageMenuItem('Pause')
+		item.connect('activate', self.radio.stopradio)
+		item.set_image(gtk.image_new_from_stock('gtk-media-stop'),gtk.ICON_SIZE_MENU))
+		self.append(item)
+	
+	
+		
 		item = gtk.ImageMenuItem('exit')
 		item.connect('activate', gtk.main_quit)
 		item.set_image(gtk.image_new_from_stock('gtk-quit',gtk.ICON_SIZE_MENU))
 		self.append(item)
+		
 
+		
 
 	def show_menu(self, widget, button, time):
 			self.show_all()
