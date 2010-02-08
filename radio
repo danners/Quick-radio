@@ -14,25 +14,25 @@ class Player:
 		bus.connect("message", self.on_message)
 	
 	
-	def playdradio(self,chan):
+	def playdradio(self,origin):
 		self.player.set_state(gst.STATE_NULL)
 		self.player.set_property("uri",self.dradio)
 		self.player.set_state(gst.STATE_PLAYING)
 		notify("Spiele Dradio")
 
-	def playfritz(self,chan):
+	def playfritz(self,origin):
 		self.player.set_state(gst.STATE_NULL)
 		self.player.set_property("uri",self.fritz)
 		self.player.set_state(gst.STATE_PLAYING)
 		notify("Spiele Fritz")
 	
-	def playdradiow(self,chan):
+	def playdradiow(self,origin):
 		self.player.set_state(gst.STATE_NULL)
 		self.player.set_property("uri",self.dradiow)
 		self.player.set_state(gst.STATE_PLAYING)
 		notify("Spiele Dradio Wissen")
 		
-	def stopradio(self):
+	def stopradio(self,origin):
 		self.player.set_state(gst.STATE_NULL)
 	
 	def on_message(self,bus,message):
@@ -70,9 +70,8 @@ class RadioMenu(gtk.Menu):
 		
 		item = gtk.ImageMenuItem('Pause')
 		item.connect('activate', self.radio.stopradio)
-		item.set_image(gtk.image_new_from_stock('gtk-media-stop'),gtk.ICON_SIZE_MENU))
+		item.set_image(gtk.image_new_from_stock('gtk-media-stop',gtk.ICON_SIZE_MENU))
 		self.append(item)
-	
 	
 		
 		item = gtk.ImageMenuItem('exit')
