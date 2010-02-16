@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import gtk, gst, pynotify, pickle
+import gtk, gst, pynotify, pickle,os
 
 class Sender:
 	def __init__(self):
@@ -103,7 +103,7 @@ def notify(message):
 
 icon = gtk.status_icon_new_from_file('/usr/share/icons/gnome/24x24/devices/gnome-dev-wavelan.png')
 icon.set_tooltip('Radio switcher')
-datei = open('/home/simon/.radio','r')
+datei = open(os.path.expanduser('~')+'/.radio','r')
 menu = RadioMenu()
 pynotify.init('icon-summary')
 initCaps()
