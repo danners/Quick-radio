@@ -2,36 +2,40 @@
 
 import gtk, gst, pynotify
 
+class Sender:
+	def __init__(self):
+		self.address=""
+		self.name=""
+		self.cat=""
+
+def makesender(name,address,cat):
+		sender = Sender()
+		sender.name=name
+		sender.address=address
+		sender.cat=cat
+		return sender
+
+
 
 class Player:
 	def __init__(self):
-		self.fritz=('mms://stream2.rbb-online.de/wmtencoder/fritz-live-backup.wma')
-		self.dradio=('http://dradio.ic.llnwd.net/stream/dradio_dlf_m_a.ogg')
-		self.dradiow=('http://dradio.ic.llnwd.net/stream/dradio_dwissen_m_a.ogg')
+		a=makesender('Fritz','mms://stream2.rbb-online.de/wmtencoder/fritz-live-backup.wma','rock')
+		b=makesender('Dradio','http://dradio.ic.llnwd.net/stream/dradio_dlf_m_a.ogg','news')
+		c=makesender('Dradio Wissen','http://dradio.ic.llnwd.net/stream/dradio_dwissen_m_a.ogg','news')
+		self.senderliste=[a,b,c]
+
+
 		self.player = gst.element_factory_make("playbin","player")
 		bus = self.player.get_bus()
 		bus.add_signal_watch()
 		bus.connect("message", self.on_message)
 	
-	
-	def playdradio(self,origin):
+	def playradio(self,bla,sender):
 		self.player.set_state(gst.STATE_NULL)
-		self.player.set_property("uri",self.dradio)
+		self.player.set_property("uri",sender.address)
 		self.player.set_state(gst.STATE_PLAYING)
-		notify("Spiele Dradio")
+		notify("Spiele "+sender.name)
 
-	def playfritz(self,origin):
-		self.player.set_state(gst.STATE_NULL)
-		self.player.set_property("uri",self.fritz)
-		self.player.set_state(gst.STATE_PLAYING)
-		notify("Spiele Fritz")
-	
-	def playdradiow(self,origin):
-		self.player.set_state(gst.STATE_NULL)
-		self.player.set_property("uri",self.dradiow)
-		self.player.set_state(gst.STATE_PLAYING)
-		notify("Spiele Dradio Wissen")
-		
 	def stopradio(self,origin):
 		self.player.set_state(gst.STATE_NULL)
 	
@@ -48,25 +52,13 @@ class RadioMenu(gtk.Menu):
 	def __init__(self):
 		gtk.Menu.__init__(self)
 	       	self.radio = Player()	
-
-		item = gtk.ImageMenuItem('Dradio')
-		item.connect('activate', self.radio.playdradio)
-		item.set_image(gtk.image_new_from_stock('gtk-media-play', gtk.ICON_SIZE_MENU))
-		self.append(item)
-
-
-		item = gtk.ImageMenuItem('Fritz')
-		item.connect('activate', self.radio.playfritz)
-		item.set_image(gtk.image_new_from_stock('gtk-media-play', gtk.ICON_SIZE_MENU))
-		self.append(item)
+		for sender in self.radio.senderliste:
+				item = gtk.ImageMenuItem(sender.name)
+				item.connect('activate', self.radio.playradio,sender)
+				item.set_image(gtk.image_new_from_stock('gtk-media-play', gtk.ICON_SIZE_MENU))
+				self.append(item)
 
 		
-                
-		item = gtk.ImageMenuItem('Dradio W')
-                item.connect('activate', self.radio.playdradiow)
-                item.set_image(gtk.image_new_from_stock('gtk-media-play', gtk.ICON_SIZE_MENU))
-		self.append(item)
-
 		
 		item = gtk.ImageMenuItem('Pause')
 		item.connect('activate', self.radio.stopradio)
@@ -74,7 +66,7 @@ class RadioMenu(gtk.Menu):
 		self.append(item)
 	
 		
-		item = gtk.ImageMenuItem('exit')
+		item = gtk.ImageMenuItem('Beenden')
 		item.connect('activate', gtk.main_quit)
 		item.set_image(gtk.image_new_from_stock('gtk-quit',gtk.ICON_SIZE_MENU))
 		self.append(item)
@@ -114,7 +106,6 @@ def notify(message):
 
 icon = gtk.status_icon_new_from_file('/usr/share/icons/gnome/24x24/devices/gnome-dev-wavelan.png')
 icon.set_tooltip('Radio switcher')
-player = Player()
 menu = RadioMenu()
 pynotify.init('icon-summary')
 initCaps()
