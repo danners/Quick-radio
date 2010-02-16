@@ -19,7 +19,7 @@ def makesender(name,address,cat):
 
 class Player:
 	def __init__(self):
-		self.senderliste= pickle.load(datei)
+		self.senderliste= pickle.load(settings)
 		self.player = gst.element_factory_make("playbin","player")
 		bus = self.player.get_bus()
 		bus.add_signal_watch()
@@ -103,7 +103,7 @@ def notify(message):
 
 icon = gtk.status_icon_new_from_file('/usr/share/icons/gnome/24x24/devices/gnome-dev-wavelan.png')
 icon.set_tooltip('Radio switcher')
-datei = open(os.path.expanduser('~')+'/.radio','r')
+settings = open(os.path.expanduser('~')+'/.radio','r')
 menu = RadioMenu()
 pynotify.init('icon-summary')
 initCaps()
