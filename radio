@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import gtk, gst, pynotify
+import gtk, gst, pynotify, pickle
 
 class Sender:
 	def __init__(self):
@@ -19,27 +19,22 @@ def makesender(name,address,cat):
 
 class Player:
 	def __init__(self):
-		a=makesender('Fritz','mms://stream2.rbb-online.de/wmtencoder/fritz-live-backup.wma','rock')
-		b=makesender('Dradio','http://dradio.ic.llnwd.net/stream/dradio_dlf_m_a.ogg','news')
-		c=makesender('Dradio Wissen','http://dradio.ic.llnwd.net/stream/dradio_dwissen_m_a.ogg','news')
-		self.senderliste=[a,b,c]
-
-
+		self.senderliste= pickle.load(datei)
 		self.player = gst.element_factory_make("playbin","player")
 		bus = self.player.get_bus()
 		bus.add_signal_watch()
 		bus.connect("message", self.on_message)
 	
-	def playradio(player,origin,sender):
+	def playradio(self,origin,sender):
 		self.player.set_state(gst.STATE_NULL)
 		self.player.set_property("uri",sender.address)
 		self.player.set_state(gst.STATE_PLAYING)
 		notify("Spiele "+sender.name)
 
-	def stopradio(player,origin):
+	def stopradio(self,origin):
 		self.player.set_state(gst.STATE_NULL)
 	
-	def on_message(player,bus,message):
+	def on_message(self,bus,message):
 		t = message.type
 		if t == gst.MESSAGE_EOS:
 			self.player.set_state(gst.STATE_NULL)
@@ -108,6 +103,7 @@ def notify(message):
 
 icon = gtk.status_icon_new_from_file('/usr/share/icons/gnome/24x24/devices/gnome-dev-wavelan.png')
 icon.set_tooltip('Radio switcher')
+datei = open('/home/simon/.radio','r')
 menu = RadioMenu()
 pynotify.init('icon-summary')
 initCaps()
